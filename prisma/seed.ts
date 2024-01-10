@@ -498,7 +498,7 @@ async function main() {
   await prisma.t1Transactions
     .createMany({
       data: Products.concat(Products).map((_p) => ({
-        gross_sales_volume: generateRandomFloatingPoint(),
+        grossSalesVolume: generateRandomFloatingPoint(),
         productId: `P${getRandomNumberInRange(Products.length - 1)}`,
         customerId: `C${getRandomNumberInRange(Customers.length - 1)}`,
         createdAt: getRandomDateInRange(300),

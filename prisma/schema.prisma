@@ -31,9 +31,9 @@ model Dashboards {
   id                          String    @id @unique @default(uuid()) @db.Text
   name                        String    @default("") @db.Text
   category                    Category  @default(Misc)
+  createdAt                   DateTime? @default(now())
   dateFilter_name             String    @default("") @db.Text
   dateFilter_initialDateRange DateRange @default(LAST_30_DAYS)
-  createdAt                   DateTime? @default(now())
   Charts                      Charts[]
 }
 
@@ -61,18 +61,19 @@ model T1Customers {
 }
 
 model T1Products {
-  id        String    @id @unique @default(cuid())
-  name      String    @default("") @db.Text
-  price     Float     @default(0) @db.DoublePrecision
-  createdAt DateTime? @default(now())
+  id          String    @id @unique @default(cuid())
+  name        String    @default("") @db.Text
+  price       Float     @default(0) @db.DoublePrecision
+  costOfGoods Float     @default(0) @db.DoublePrecision
+  createdAt   DateTime? @default(now())
 
   Transactions T1Transactions[]
 }
 
 model T1Transactions {
-  id                 String    @id @unique @default(cuid())
-  gross_sales_volume Float     @default(0) @db.DoublePrecision
-  createdAt          DateTime? @default(now())
+  id               String    @id @unique @default(cuid())
+  grossSalesVolume Float     @default(0) @db.DoublePrecision
+  createdAt        DateTime? @default(now())
 
   Customer   T1Customers @relation(fields: [customerId], references: [id])
   customerId String      @db.Text
