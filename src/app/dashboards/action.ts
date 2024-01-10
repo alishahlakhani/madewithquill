@@ -1,4 +1,4 @@
-import { DashboardType } from "@zero/types/database-type";
+import { DashboardType } from "@zero/types/dashboard-type";
 
 const FAKE_RESPONSE: Array<DashboardType> = [
   {
