@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DateRange {
+  LAST_90_DAYS
+  LAST_30_DAYS
+  CURRENT_MONTH
+}
+
+enum Category {
+  User
+  Financial
+  Marketing
+  Business
+  Support
+  Misc
+}
+
+enum ChartType {
+  Line
+  Bar
+}
+
+model Dashboards {
+  id                          String    @id @unique @default(uuid()) @db.Text
+  name                        String    @default("") @db.Text
+  category                    Category  @default(Misc)
+  dateFilter_name             String    @default("") @db.Text
+  dateFilter_initialDateRange DateRange @default(LAST_30_DAYS)
+  createdAt                   DateTime? @default(now())
+  Charts                      Charts[]
+}
+
+model Charts {
+  id              String      @id @unique @default(uuid()) @db.Text
+  name            String      @default("") @db.Text
+  Dashboard       Dashboards? @relation(references: [id], fields: [dashboardId])
+  dashboardId     String?     @db.Text
+  chartType       ChartType   @default(Line)
+  sqlQuery        String      @default("") @db.Text
+  xAxisField      String      @default("") @db.Text
+  yAxisField      String      @default("") @db.Text
+  dateField_table String      @default("") @db.Text
+  dateField_field String      @default("") @db.Text
+}
+
+model T1Customers {
+  id              String    @id @unique @default(cuid())
+  email           String    @default("") @db.Text
+  name            String    @default("") @db.Text
+  createdAt       DateTime? @default(now())
+  firstPurchaseAt DateTime? @default(now())
+
+  Transactions T1Transactions[]
+}
+
+model T1Products {
+  id        String    @id @unique @default(cuid())
+  name      String    @default("") @db.Text
+  price     Float     @default(0) @db.DoublePrecision
+  createdAt DateTime? @default(now())
+
+  Transactions T1Transactions[]
+}
+
+model T1Transactions {
+  id                 String    @id @unique @default(cuid())
+  gross_sales_volume Float     @default(0) @db.DoublePrecision
+  createdAt          DateTime? @default(now())
+
+  Customer   T1Customers @relation(fields: [customerId], references: [id])
+  customerId String      @db.Text
+  Product    T1Products  @relation(fields: [productId], references: [id])
+  productId  String      @db.Text
+}

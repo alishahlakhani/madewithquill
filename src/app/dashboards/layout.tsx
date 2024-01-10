@@ -1,6 +1,5 @@
 import { Navbar } from '@zero/components/navbar';
 import type { Metadata } from 'next'
-import { GetDashboards } from './action';
 
 export const metadata: Metadata = {
   title: 'Tools for builders | madeofzero',

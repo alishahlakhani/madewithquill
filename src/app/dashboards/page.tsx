@@ -3,7 +3,6 @@ import { GetDashboards } from "./action"
 
 export default async function Dashboards() {
   const dashboards = await GetDashboards();
-
   return (
     <div className="w-full flex gap-5 flex-wrap">
       {dashboards.map(dashboard => <Link href={`/dashboards/${dashboard.id}`} key={dashboard.id}>

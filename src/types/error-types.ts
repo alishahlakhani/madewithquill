@@ -1,6 +1,7 @@
 export const ErrorCodes = {
   MISC_MIDDLEWARE_FAILURE: "Middleware: Middleware error",
   MISSING_ENV_VAR: "Server: Missing variable in .env",
+  MISC: "Misc server error",
 };
 
 type Jsonable =
