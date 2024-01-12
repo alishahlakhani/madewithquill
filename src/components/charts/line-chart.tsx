@@ -1,18 +1,16 @@
 'use client'
-import { Line, LineChart, Tooltip, XAxis } from 'recharts';
+import { Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 
 type Props = {
-    xAxisField: string;
     yAxisField: string;
+    xAxisField: string;
     data?: Array<any>;
 }
 
 export function LineChartContainer(props: Props) {
-    const { data, xAxisField, yAxisField } = props
+    const { data, yAxisField, xAxisField } = props
 
-    const totalDataPointsCount: number = Array.isArray(data) ? data.length - 1 : 0;
-    const labelStart = data?.[0]?.[xAxisField];
-    const labelEnd = data?.[data?.length - 1]?.[xAxisField];
+    const totalDataPointsCount: number = Array.isArray(data) ? data.length : 0;
 
     if (totalDataPointsCount === 0) {
         return <div className='flex justify-center h-60 items-center flex-col'>
@@ -21,19 +19,10 @@ export function LineChartContainer(props: Props) {
         </div>
     }
 
-    return <div className="relative">
-        <p className='absolute bottom-0 text-sm font-medium opacity-40'>{labelStart}</p>
-        <LineChart data={data} width={550} height={200} onClick={e => console.log(e)}>
-            <defs>
-                <linearGradient id="colorL1" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-                </linearGradient>
-            </defs>
-            <Tooltip />
-            <XAxis dataKey={xAxisField} tickLine={false} axisLine={false} tick={false} />
-            <Line type="monotoneX" dataKey={yAxisField} fillOpacity={.4} strokeOpacity={1} fill="url(#colorL1)" stroke="var(--primary)" dot={false} />
-        </LineChart>
-        <p className='absolute bottom-0 right-0 text-sm font-medium opacity-40'>{labelEnd}</p>
-    </div>
+    return <LineChart data={data} width={550} height={200} onClick={e => console.log(data)}>
+        <Tooltip />
+        <XAxis dataKey={"date"} interval={10 % 0} fontSize={12}></XAxis>
+        <Line type="monotoneX" dataKey={yAxisField} fillOpacity={.4} strokeOpacity={1} strokeWidth={2} stroke="var(--secondary)" dot={false} />
+        <Line type="monotoneX" dataKey={xAxisField} fillOpacity={.4} strokeOpacity={1} strokeWidth={2} stroke="var(--primary)" dot={false} />
+    </LineChart>
 }

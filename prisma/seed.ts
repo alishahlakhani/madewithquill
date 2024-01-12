@@ -9,9 +9,7 @@ const getRandomDateInRange = (dayVariance: number = 300): Date => {
     today.getTime() - dayVariance * 24 * 60 * 60 * 1000
   );
 
-  const maxDate: Date = new Date(
-    today.getTime() + dayVariance * 24 * 60 * 60 * 1000
-  );
+  const maxDate: Date = new Date(today.getTime());
 
   const randomTimestamp: number =
     minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
@@ -497,12 +495,14 @@ async function main() {
 
   await prisma.t1Transactions
     .createMany({
-      data: Products.concat(Products).map((_p) => ({
-        grossSalesVolume: generateRandomFloatingPoint(),
-        productId: `P${getRandomNumberInRange(Products.length - 1)}`,
-        customerId: `C${getRandomNumberInRange(Customers.length - 1)}`,
-        createdAt: getRandomDateInRange(300),
-      })),
+      data: Array(3000)
+        .fill(0)
+        .map((_p) => ({
+          grossSalesVolume: generateRandomFloatingPoint(),
+          productId: `P${getRandomNumberInRange(Products.length - 1)}`,
+          customerId: `C${getRandomNumberInRange(Customers.length - 1)}`,
+          createdAt: getRandomDateInRange(3000),
+        })),
       skipDuplicates: true,
     })
     .catch((e) => {

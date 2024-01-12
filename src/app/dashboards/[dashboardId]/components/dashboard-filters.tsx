@@ -10,7 +10,7 @@ import { ComparePeriodsType, DefaultsType } from "../../action";
 import { DateRange } from "react-day-picker";
 
 type Props = {
-  state: Pick<DefaultsType, "from" | "to" | "compare">,
+  state: DefaultsType,
   touched: boolean,
   touched_keys: Array<string>
 }
@@ -74,16 +74,6 @@ export function DashboardFilters(props: Props) {
     router.refresh()
   }
 
-  let preset = undefined;
-
-  if (isFirstDayOfMonth(state.from) && isLastDayOfMonth(state.to)) {
-    preset = DbDateRange.CURRENT_MONTH
-  } else if (differenceInCalendarDays(state.to, state.from) === 30) {
-    preset = DbDateRange.LAST_30_DAYS
-  } else if (differenceInCalendarDays(state.to, state.from) === 90) {
-    preset = DbDateRange.LAST_90_DAYS
-  }
-
   return (
     <div className="flex gap-2 items-center">
       <DateRangePicker date={{
@@ -92,9 +82,9 @@ export function DashboardFilters(props: Props) {
       }} onChange={handleFromToChange} className={cn({
         "outline outline-[0.5px] outline-primary": touched_keys.includes("from") || touched_keys.includes("to")
       })}>
-        <SelectComparisonRange placeholder="Select from a preset range" range={DbDateRange} value={preset} showValueFn={(val => val.replaceAll(/_/g, " ").toLowerCase())} onChange={handlePresetChange} className={cn("mb-2", {
+        <SelectComparisonRange placeholder="Select from a preset range" range={DbDateRange} value={state.preset} showValueFn={(val => val.replaceAll(/_/g, " ").toLowerCase())} onChange={handlePresetChange} className={cn("mb-2", {
           "outline outline-[0.5px] outline-primary": touched_keys.includes("preset"),
-          "normal-case": !preset
+          "normal-case": !state.preset
         })} />
       </DateRangePicker>
 
