@@ -22,19 +22,8 @@ export async function GetChartsByDashboardId(
   });
 }
 
-export async function GetChartByChartId(id: string): Promise<any> {
-  const chart = await prisma.charts.findFirst({
-    orderBy: {
-      id: "asc",
-    },
-    where: {
-      id,
-    },
-  });
-  console.log("sqlQuery", `=>${chart?.sqlQuery}<=`);
-  const queryResults = await prisma.$queryRawUnsafe(chart?.sqlQuery + "");
-  console.log(queryResults);
-  return { data: queryResults, chart };
+export async function GetChartData(sqlQuery: string): Promise<Array<any>> {
+  return await prisma.$queryRawUnsafe(sqlQuery + "");
 }
 
 export async function GetDashboardId(id: string): Promise<Dashboards | null> {

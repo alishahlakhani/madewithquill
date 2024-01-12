@@ -20,14 +20,14 @@ export default async function DashboardLayout(props: { children: React.ReactNode
   const { children } = props;
 
   return <main className='overflow-scroll h-screen bg-background'>
-    <div className='bg-primary pb-52'>
+    <div className='bg-primary pb-16'>
       <Navbar className='py-4 px-4' menu={[{
         title: "All Dashboards",
         href: "/dashboards"
       }]} />
     </div>
     <div className='py-4 px-4 bg-background h-full '>
-      <section className='bg-white rounded-sm p-8 shadow-md min-w-full text-black '>
+      <section className='bg-white rounded-sm p-8 shadow-md w-full text-black '>
         {children}
       </section>
       <footer className='w-full flex justify-center items-center my-4'>

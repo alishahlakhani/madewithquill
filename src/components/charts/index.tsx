@@ -1,51 +1,52 @@
-"use client"
-import React from "react";
 import { AreaChartContainer } from "./area-chart";
 import { LineChartContainer } from "./line-chart";
-import { ResponsiveContainer } from "recharts";
-import { cn } from "@zero/utils";
 import { Charts } from "@prisma/client";
+import { BarChartContainer } from "./bar-chart";
+import { GetChartData } from "@zero/app/dashboards/action";
 
 const Charts = {
     line: {
         Component: LineChartContainer
     },
-    bar: {
+    area: {
         Component: AreaChartContainer
+    },
+    bar: {
+        Component: BarChartContainer
     }
 }
 
-type Props<DataType> = {
-    type: keyof typeof Charts;
-    data: Array<DataType>;
+type Props = {
     styles?: React.CSSProperties;
     className?: string;
-    name: string,
-    xAxisField: string,
-    yAxisField: string,
     [key: string]: any
-} & Partial<Charts>
+} & Charts
+
 
 function ChartWrapper({ name, children }: { name: string, children: any }) {
-    return <div className="shadow p-4 border">
-        <p className="font-bold text-3xl text-center">{name}</p>
+    return <div className="shadow rounded-lg p-4 border w-fit bg-white hover:shadow-xl hover:-translate-y-0.5 transition-all transform text-center grayscale hover:grayscale-0 ease-out opacity-70 hover:opacity-100">
+        <p className="font-bold text-3xl">{name}</p>
         {children}
     </div>
 }
-export function Chart<DataType = any>(props: Props<DataType>) {
-    const { type, data, styles, className, name, xAxisField, yAxisField, ...other } = props;
+export async function Chart(props: Props) {
+    const { styles, className, id, name, dashboardId, chartType, sqlQuery, xAxisField, yAxisField, dateField_table, dateField_field, ...other } = props;
+    const data = await GetChartData(sqlQuery);
 
-    switch (type) {
-        case "line":
+    switch (chartType) {
+        case "Line":
             return <ChartWrapper name={name}>
-                <LineChartContainer<DataType> data={data} xAxisField={xAxisField} yAxisField={yAxisField} {...other} />
+                <LineChartContainer data={data} xAxisField={xAxisField} yAxisField={yAxisField} {...other} />
             </ChartWrapper>
-        case "bar":
+        case "Bar":
             return <ChartWrapper name={name}>
-                <AreaChartContainer<DataType> data={data} xAxisField={xAxisField} yAxisField={yAxisField} {...other} />
+                <BarChartContainer data={data} xAxisField={xAxisField} yAxisField={yAxisField} {...other} />
+            </ChartWrapper>
+        case "Area":
+            return <ChartWrapper name={name}>
+                <AreaChartContainer data={data} xAxisField={xAxisField} yAxisField={yAxisField} {...other} />
             </ChartWrapper>
         default:
-            <p>No Chart of type {type} found.</p>
-        // return <AreaChartContainer<DataType> data={data}></AreaChartContainer>
+            <p>No Chart of type {chartType} found.</p>
     }
 }

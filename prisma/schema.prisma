@@ -25,6 +25,7 @@ enum Category {
 enum ChartType {
   Line
   Bar
+  Area
 }
 
 model Dashboards {
