@@ -1,6 +1,7 @@
 import { prisma } from "@zero/utils/db";
 import { NextRequest } from "next/server";
 
+// Get dashboard details by dashboar id
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }

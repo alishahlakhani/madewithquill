@@ -1,32 +1,81 @@
-import { AreaChartContainer } from "./area-chart";
-import { ComparePeriodsType, DefaultsType, GetChartData } from "@zero/app/dashboards/action";
+"use client"
+import { Button } from "@zero/components/ui/button";
+import { useDashboardState } from "./dashboard-provider";
+import { Skeleton } from "@zero/components/ui/skeleton";
+import { LoaderIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Charts } from "@prisma/client";
 import { differenceInCalendarDays, format, isAfter, isBefore, isEqual } from "date-fns";
+import { ComparePeriodsType } from "@zero/app/dashboards/action";
+import { AreaChartContainer } from "@zero/components/charts/area-chart";
+import { LineChartContainer } from "@zero/components/charts/line-chart";
 import { cn } from "@zero/utils";
-import { Button } from "../ui/button";
-import { LineChartContainer } from "./line-chart";
 
 type Props = {
     styles?: React.CSSProperties;
     className?: string;
     id: string;
-} & DefaultsType
+}
 
-export async function Chart(props: Props) {
-    const { styles, className, from, to, compare, preset, id, ...other } = props;
-    let { chart, data } = await GetChartData<Array<any>>(id, to, from, compare);
+export const LoadingChartUI = () => <Skeleton className="w-full grow h-[300px] border flex justify-center items-center text-sm"><LoaderIcon className="animate-spin opacity-25" /></Skeleton>
+
+export function ClientSideCharts(props: Props) {
+    const { styles, className, id } = props;
+    const { state } = useDashboardState()
+    const [chartState, setChartState] = useState<{
+        chart: Charts | null,
+        data: Array<any>,
+        loading: boolean
+    }>({
+        chart: null,
+        data: [],
+        loading: true
+    });
+
+    const { chart, data, loading } = chartState;
+    const { from, to, compare, preset } = state
+
+    async function reloadChartData() {
+        const [response] = await Promise.all([
+            fetch("/api/chart/" + id, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    to: format(to, "dd-MM-yyyy"),
+                    from: format(from, "dd-MM-yyyy"),
+                    compare,
+                }),
+            }).then(async resp => {
+                if (!resp.ok) {
+                    // TODO:
+                }
+                return await resp.json()
+            }),
+        ])
+        setChartState({
+            chart: response.chart,
+            data: response.data,
+            loading: false
+        })
+    }
+
+    useEffect(() => {
+        reloadChartData();
+    }, [from, to, compare, preset])
 
     const ChartNotfound = () => <div className="rounded-lg p-4 flex-col flex items-center justify-center bg-slate-50 transition-all border transform w-full">
         <span className='text-3xl'>😰</span>
         <span className='font-semibold text-black/40 text-sm mb-2'>Chart does not exist.</span>
-        <div className="flex gap-2 mt-3">
-            <Button size={"sm"} variant={"outline"}>Create new</Button>
-            <Button size={"sm"} variant={"link"}>or Learn more</Button>
-        </div>
+        <Button size={"sm"} variant={"outline"}>Create new</Button>
     </div>
 
-    if (!chart) return <ChartNotfound />
+    if (loading) return <LoadingChartUI />
+    if (!chart || data.length === 0) return <ChartNotfound />
 
     const { xAxisField, yAxisField, chartType, name } = chart
+
     let originalData = data.filter((d: any) => isAfter(d[xAxisField], from) || isEqual(d[xAxisField], from))
     let compareData = data.filter((d: any) => isBefore(d[xAxisField], from));
     compareData = compareData.slice(0, Math.min(originalData.length, compareData.length));
@@ -45,7 +94,7 @@ export async function Chart(props: Props) {
         case "Line":
             return <div className="flex">
                 <ChartWrapper name={name} to={to} from={from} compare={compare} aggregateOriginal={aggregateOriginalValue} aggregateCompare={aggregateCompareValue} aggregateLabel={aggregateLabel} aggregateVariance={aggregateVariance}>
-                    <LineChartContainer originalData={originalData} compareData={compareData} xAxisField={xAxisField} yAxisField={yAxisField}  {...other} />
+                    <LineChartContainer originalData={originalData} compareData={compareData} xAxisField={xAxisField} yAxisField={yAxisField} />
                 </ChartWrapper>
             </div>
         //     case "Bar":
@@ -55,7 +104,7 @@ export async function Chart(props: Props) {
         case "Area":
             return <div className="flex">
                 <ChartWrapper name={name} to={to} from={from} compare={compare} aggregateOriginal={aggregateOriginalValue} aggregateCompare={aggregateCompareValue} aggregateLabel={aggregateLabel} aggregateVariance={aggregateVariance}>
-                    <AreaChartContainer originalData={originalData} compareData={compareData} xAxisField={xAxisField} yAxisField={yAxisField} {...other} />
+                    <AreaChartContainer originalData={originalData} compareData={compareData} xAxisField={xAxisField} yAxisField={yAxisField} />
                 </ChartWrapper>
             </div>
 

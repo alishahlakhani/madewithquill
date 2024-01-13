@@ -1,6 +1,7 @@
 import { prisma } from "@zero/utils/db";
 import { NextRequest } from "next/server";
 
+// Get all charts for a dashboard
 export async function GET(
   request: NextRequest,
   { params }: { params: { dashboardId: string } }
@@ -10,7 +11,7 @@ export async function GET(
   if (!dashboardId)
     return new Response("No dashboardId found in the request", { status: 400 });
 
-  const chart = await prisma.charts.findFirstOrThrow({
+  const chart = await prisma.charts.findMany({
     orderBy: {
       dashboardId: "asc",
     },
