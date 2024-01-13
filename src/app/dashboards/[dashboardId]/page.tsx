@@ -16,14 +16,11 @@ export default async function ViewDashboardPage(props: { params: { dashboardId: 
     compare: "previous_period",
   }
 
-
-
   let state: DefaultsType = {
     from: searchParams?.from ? new Date(parse(searchParams.from, 'dd-MM-yyyy', new Date())) : new Date(defaults.from),
     to: searchParams?.to ? new Date(parse(searchParams.to, 'dd-MM-yyyy', new Date())) : new Date(defaults.to),
     compare: searchParams?.compare ? searchParams.compare as keyof typeof ComparePeriodsType : defaults.compare,
   }
-
 
   if (isFirstDayOfMonth(state.from) && isLastDayOfMonth(state.to) && isSameMonth(state.from, state.to)) {
     state.preset = DateRange.CURRENT_MONTH
@@ -38,7 +35,6 @@ export default async function ViewDashboardPage(props: { params: { dashboardId: 
 
   return (
     <section>
-      <pre>{JSON.stringify(state, null, 2)}</pre>
       <div className="flex mb-6">
         <div className="grow">
           <h1 className="text-xl text-primary"><strong>{dashboard?.name}</strong> Dashboard</h1>
@@ -50,16 +46,7 @@ export default async function ViewDashboardPage(props: { params: { dashboardId: 
       <div className="flex gap-2 justify-between">
         {charts.map(chart => <Chart
           key={chart.id}
-          type={chart.chartType}
           id={chart.id}
-          name={chart.name}
-          dashboardId={chart.dashboardId}
-          chartType={chart.chartType}
-          sqlQuery={chart.sqlQuery}
-          xAxisField={chart.xAxisField}
-          yAxisField={chart.yAxisField}
-          dateField_table={chart.dateField_table}
-          dateField_field={chart.dateField_field}
           from={state.from}
           to={state.to}
           compare={state.compare}

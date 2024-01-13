@@ -3,20 +3,19 @@ import { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { name: string } }
+  { params }: { params: { id: string } }
 ): Promise<Response> {
-  const { name } = params;
+  const { id } = params;
 
-  if (!name)
-    return new Response("No name found in the request", { status: 400 });
+  if (!id) return new Response("No id found in the request", { status: 400 });
 
   const dashboard = await prisma.dashboards.findFirstOrThrow({
     orderBy: {
       id: "asc",
     },
     where: {
-      name: {
-        equals: name,
+      id: {
+        equals: id,
         mode: "insensitive",
       },
     },

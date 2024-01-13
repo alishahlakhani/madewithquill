@@ -28,6 +28,13 @@ enum ChartType {
   Area
 }
 
+enum FieldFormatType {
+  format_date
+  format_currency
+  format_number
+  format_text
+}
+
 model Dashboards {
   id                          String    @id @unique @default(uuid()) @db.Text
   name                        String    @default("") @db.Text
@@ -39,16 +46,18 @@ model Dashboards {
 }
 
 model Charts {
-  id              String      @id @unique @default(uuid()) @db.Text
-  name            String      @default("") @db.Text
-  Dashboard       Dashboards? @relation(references: [id], fields: [dashboardId])
-  dashboardId     String?     @db.Text
-  chartType       ChartType   @default(Line)
-  sqlQuery        String      @default("") @db.Text
-  xAxisField      String      @default("") @db.Text
-  yAxisField      String      @default("") @db.Text
-  dateField_table String      @default("") @db.Text
-  dateField_field String      @default("") @db.Text
+  id                String          @id @unique @default(uuid()) @db.Text
+  name              String          @default("") @db.Text
+  Dashboard         Dashboards?     @relation(references: [id], fields: [dashboardId])
+  dashboardId       String?         @db.Text
+  chartType         ChartType       @default(Line)
+  sqlQuery          String          @default("") @db.Text
+  xAxisField        String          @default("") @db.Text
+  xAxisField_format FieldFormatType @default(format_text)
+  yAxisField        String          @default("") @db.Text
+  yAxisField_format FieldFormatType @default(format_text)
+  dateField_table   String          @default("") @db.Text
+  dateField_field   String          @default("") @db.Text
 }
 
 model T1Customers {

@@ -1,16 +1,17 @@
 'use client'
-import { Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { Line, LineChart } from 'recharts';
 
 type Props = {
     yAxisField: string;
     xAxisField: string;
-    data?: Array<any>;
+    originalData?: Array<any>;
+    compareData?: Array<any>;
 }
 
 export function LineChartContainer(props: Props) {
-    const { data, yAxisField, xAxisField } = props
+    const { originalData, compareData, yAxisField } = props
 
-    const totalDataPointsCount: number = Array.isArray(data) ? data.length : 0;
+    const totalDataPointsCount: number = Array.isArray(originalData) ? originalData.length : 0;
 
     if (totalDataPointsCount === 0) {
         return <div className='flex justify-center h-60 items-center flex-col'>
@@ -19,10 +20,23 @@ export function LineChartContainer(props: Props) {
         </div>
     }
 
-    return <LineChart data={data} width={550} height={200} onClick={e => console.log(data)}>
-        <Tooltip />
-        <XAxis dataKey={"date"} interval={10 % 0} fontSize={12}></XAxis>
-        <Line type="monotoneX" dataKey={yAxisField} fillOpacity={.4} strokeOpacity={1} strokeWidth={2} stroke="var(--secondary)" dot={false} />
-        <Line type="monotoneX" dataKey={xAxisField} fillOpacity={.4} strokeOpacity={1} strokeWidth={2} stroke="var(--primary)" dot={false} />
-    </LineChart>
+    return <div className='relative'>
+        {compareData && <LineChart data={compareData} width={550} height={200} onClick={() => console.log(compareData)}>
+            <Line type="linear" dataKey={yAxisField} strokeOpacity={.7} strokeWidth={2} animationDuration={2500} stroke="#43434330" dot={false} />
+        </LineChart>}
+        <LineChart data={originalData} width={550} height={200} onClick={() => console.log(originalData)} className='z-10' style={{
+            position: "absolute",
+            bottom: 0
+        }}>
+            <Line type="linear" dataKey={yAxisField} fillOpacity={.4} strokeOpacity={1} strokeWidth={2} animationDuration={2500} stroke="var(--primary)" dot={p => {
+                const { width, height, cx, cy, r, index } = p
+                if (index === originalData?.length! - 1)
+                    return <svg height={height + cy} width={width + cx}>
+                        <circle cx={cx} cy={cy} r={r} fill="var(--primary)" />
+                    </svg>
+                return <></>
+            }} />
+        </LineChart>
+
+    </div>
 }

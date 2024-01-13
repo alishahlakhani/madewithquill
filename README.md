@@ -15,17 +15,17 @@ To gain insight on how Quill works, you will walk through building a lightweight
 7. ✅ Create _preset dropdown_ with presets (`Last 90 days`, `Last 30 days`, `Current month`)
 8. ✅ Create _Comparison dropdown_ (`Previous period`, `Previous 90 days`, `Previous 30 days`, `Previous month`) with default value to be `Previous period`.
 9. ✅ Add `onClickDashboardItem: (dashboardItem: Chart) => void` callback function that fires when a chart in the dashboard is clicked
-10. 🟣 Add comparison data in gray
-11. 🟣 Add bucket data with the value of the most recent bucket and its comparison displayed above the chart, and the percentage increase/decrease is noted in green/red. Display both metrics (most recent bucket of current range vs. most recent bucket of comparison range)
+10. ✅ Add comparison data in gray
+11. ✅ Add bucket data with the value of the most recent bucket and its comparison displayed above the chart, and the percentage increase/decrease is noted in green/red. Display both metrics (most recent bucket of current range vs. most recent bucket of comparison range)
 12. ✅ but **[NOTE: I had some issues understanding the sqlQuery part so I improvised with what I understood. Not sure if this is the most optimum way of doing this part but I had to make do with what I understood.]**.The initial fetch of a dashboard item (uses initial range from dashboard). It filters date on a SQL level. Ex: if a chart has `sqlQuery: ”select * from transactions”` and `dateField: { table: “transactions, field: “created_at” }`, it should apply a filter to the query so that the `transactions` table `created_at` field ranges only between the `startDate` and `endDate` of the date filter. I recommend using WITH statements or subqueries.
-13. ❌ the date range is in between the initial range fetched (ex: initial range is `LAST_90_DAYS`, new range filtered via the date filter in the UI is `CURRENT_MONTH` , so we already have that data surfaced on the frontend and can filter it without fetching new data)
+13. ❌ **[NOTE: I chose NextJS to carry out this entire project which handles caching properly already]** the date range is in between the initial range fetched (ex: initial range is `LAST_90_DAYS`, new range filtered via the date filter in the UI is `CURRENT_MONTH` , so we already have that data surfaced on the frontend and can filter it without fetching new data)
 14. ✅ the date range in outside of the initial range fetched. then filtering has to be done with SQL
-15. ❌ **Configure chart cutt-off**. The min and max date of the x-axis of the graph will be determined by the Preset dropdown’s range, so if there are mismatched ranges (30 days vs 90 days), then you will cut off the comparison, only showing the first 30 days. In the inverse case, the comparison will be incomplete (it will only display for the first 30 days of the 90 day range).
+15. ✅ **Configure chart cutt-off**. The min and max date of the x-axis of the graph will be determined by the Preset dropdown’s range, so if there are mismatched ranges (30 days vs 90 days), then you will cut off the comparison, only showing the first 30 days. In the inverse case, the comparison will be incomplete (it will only display for the first 30 days of the 90 day range).
 16. ✅ **Bucketing** by date should be the next largest unit of the date range. 90 days ⇒ bucket by month. Current Month ⇒ bucket by week. Note that date ranges can be custom (via the calendar), so the bucketing has to work with any date range, not just the presets.
 
 ### Backend of your choice
 
-**✅ Endpoints**
+** Endpoints**
 
 `/dashboard/:name`
 
