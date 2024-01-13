@@ -64,24 +64,6 @@ export default function ViewDashboardPage() {
   }, [])
 
 
-  console.log(dashboardState)
-  // let state: DefaultsType = {
-  //   from: searchParams?.from ? new Date(parse(searchParams.from, 'dd-MM-yyyy', new Date())) : new Date(defaults.from),
-  //   to: searchParams?.to ? new Date(parse(searchParams.to, 'dd-MM-yyyy', new Date())) : new Date(defaults.to),
-  //   compare: searchParams?.compare ? searchParams.compare as keyof typeof ComparePeriodsType : defaults.compare,
-  // }
-
-  // if (isFirstDayOfMonth(state.from) && isLastDayOfMonth(state.to) && isSameMonth(state.from, state.to)) {
-  //   state.preset = DateRange.CURRENT_MONTH
-  // } else if (differenceInCalendarDays(state.to, state.from) === 30) {
-  //   state.preset = DateRange.LAST_30_DAYS
-  // } else if (differenceInCalendarDays(state.to, state.from) === 90) {
-  //   state.preset = DateRange.LAST_90_DAYS
-  // }
-
-  // if (!dashboard)
-  //   redirect("/dashboards");
-
   const LoadingDashboadUI = () => <>
     <div className="flex justify-between">
       <div className="flex flex-col gap-2">
